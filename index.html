@@ -624,12 +624,127 @@
   .sidebar::-webkit-scrollbar { width: 4px; }
   .sidebar::-webkit-scrollbar-track { background: transparent; }
   .sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+
+  /* ── Hamburger menu button (hidden on desktop) ── */
+  .menu-btn {
+    display: none;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.4rem;
+    flex-direction: column;
+    gap: 5px;
+    flex-shrink: 0;
+  }
+  .menu-btn span {
+    display: block;
+    width: 22px;
+    height: 2px;
+    background: rgba(245,242,235,0.8);
+    border-radius: 2px;
+    transition: all 0.2s;
+  }
+
+  /* ── Sidebar overlay (mobile) ── */
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    z-index: 40;
+  }
+  .sidebar-overlay.open { display: block; }
+
+  /* ── Mobile responsive ── */
+  @media (max-width: 680px) {
+
+    /* Header */
+    .header {
+      padding: 0 1rem;
+      height: 56px;
+    }
+    .header-badge { display: none; }
+    .header-subtitle { display: none; }
+    .header-title { font-size: 1rem; }
+    .menu-btn { display: flex; }
+
+    /* App layout */
+    .app { height: calc(100vh - 56px); }
+
+    /* Sidebar becomes a slide-in drawer */
+    .sidebar {
+      position: fixed;
+      top: 56px;
+      left: 0;
+      bottom: 0;
+      width: 280px;
+      z-index: 50;
+      transform: translateX(-100%);
+      transition: transform 0.28s cubic-bezier(0.22,1,0.36,1);
+    }
+    .sidebar.open {
+      transform: translateX(0);
+      box-shadow: 4px 0 24px rgba(0,0,0,0.3);
+    }
+
+    /* Chat takes full width */
+    .chat-area { width: 100%; }
+
+    /* Topic header */
+    .topic-header { padding: 0.75rem 1rem; }
+    .topic-header-name { font-size: 0.9rem; }
+    .topic-header-desc { font-size: 0.68rem; }
+    .topic-header-icon { width: 32px; height: 32px; font-size: 1rem; }
+    .phase-pills { gap: 0.25rem; }
+    .phase-pill { padding: 0.25rem 0.5rem; font-size: 0.62rem; }
+
+    /* Messages */
+    .messages { padding: 1rem; gap: 1rem; }
+    .msg { max-width: 92%; }
+    .msg-bubble { font-size: 0.85rem; padding: 0.75rem 0.9rem; }
+    .msg-avatar { width: 28px; height: 28px; }
+    .msg-avatar img { width: 28px !important; height: 28px !important; }
+
+    /* Input area */
+    .input-area { padding: 0.75rem 1rem; }
+    .input-field { font-size: 0.875rem; min-height: 42px; }
+    .input-hint { display: none; }
+
+    /* Welcome screen */
+    .welcome { padding: 1.5rem 1rem; gap: 1rem; }
+    .welcome h2 { font-size: 1.3rem; }
+    .welcome p { font-size: 0.82rem; }
+    .welcome-icon { width: 56px; height: 56px; font-size: 1.6rem; }
+    .welcome-topics {
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      max-width: 100%;
+    }
+    .welcome-topic-card { padding: 0.75rem; }
+    .welcome-topic-card .wt-icon { font-size: 1.1rem; margin-bottom: 0.25rem; }
+    .welcome-topic-card .wt-title { font-size: 0.76rem; }
+    .welcome-topic-card .wt-desc { font-size: 0.65rem; }
+
+    /* Cards */
+    .insight-card, .tip-card { font-size: 0.76rem; }
+    .quick-replies { gap: 0.4rem; }
+    .qr-btn { font-size: 0.72rem; padding: 0.4rem 0.7rem; }
+  }
+
+  @media (max-width: 380px) {
+    .welcome-topics { grid-template-columns: 1fr; }
+    .phase-pill { display: none; }
+    .phase-pill.active { display: block; }
+  }
 </style>
 </head>
 <body>
 
 <header class="header">
   <div class="header-brand">
+    <button class="menu-btn" id="menu-btn" onclick="toggleSidebar()" aria-label="Open menu">
+      <span></span><span></span><span></span>
+    </button>
     <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEgAAABICAIAAADajyQQAAABCGlDQ1BJQ0MgUHJvZmlsZQAAeJxjYGA8wQAELAYMDLl5JUVB7k4KEZFRCuwPGBiBEAwSk4sLGHADoKpv1yBqL+viUYcLcKakFicD6Q9ArFIEtBxopAiQLZIOYWuA2EkQtg2IXV5SUAJkB4DYRSFBzkB2CpCtkY7ETkJiJxcUgdT3ANk2uTmlyQh3M/Ck5oUGA2kOIJZhKGYIYnBncAL5H6IkfxEDg8VXBgbmCQixpJkMDNtbGRgkbiHEVBYwMPC3MDBsO48QQ4RJQWJRIliIBYiZ0tIYGD4tZ2DgjWRgEL7AwMAVDQsIHG5TALvNnSEfCNMZchhSgSKeDHkMyQx6QJYRgwGDIYMZAKbWPz9HbOBQAAADyUlEQVR42u3azW4cRRAH8H9V98zsrnez/sJWYseJbVkIcwEZxBEpggOceAAOvEEkOOdBEGfEgQsneAHHkcgJWwoxyOSD2MY43vVuvLvz0V3FYUN8gZsHNFa35jC3md9UTVXXaOjO1i4u42Jc0hVgARZgARZgARZgARZgARZgARZgARZgARZgAfaviy4ZTAECFHCqdDlgY0bMlHppx3alXc9FqHycLfsCoshFPlm9KqpzjWS3e/agM0gMKbTCMAVqlqetvd6svdZIUufvHuSG/otktKUmYSFy6+bsO/OTlvmHR3/eOzx1qnXDolrhd4wIhejDziBi3tw/+f7J8dVmsjbZyESo/KBxeeHyisVm7f3FGQA7z8+Y8MHS7PpMK/diiIjAVMVUJAxytzCRqOr2cb+XFwa0ud8hglcdOgeFAonhisGc6IdLs2/OtFQxVePP1hedIPfeGl5q1RNjllq1nef9rcNTLictLx7GRCPn351vf3Rz7iTNUy+GyIteayaGqJvmt67PAuhmxcfL80Mn9496dcuiVYiYV11u173oV9tPj9MiZspFb791wzJ/ufP0i43lPwbZ1w8P7ry3ttqu3zvsAgYX3dZKgVminztnG3OTn2+s5KJMKLy0Yvu4PxTAKwTwqoCWV/YvHiaqseEHncE3u/vr062ISaCWuBVbAhHw6qhegx7f90/HL3Y7AyWowhBuv71siFSVAPl7K1yliBHgROcb8advLLSTaFwVDMBMm/ud1ItXbVjORBVILGuFIibARGR/fzHa6w1fpdyj3nD75Cxi/m7vaK4eK/Dtr4cxc8xcxoaYyvjPg4BcdOS8ISJAAAKYKDFERJkXL5oYTr0khmMmrUrEvGIysWuTjX7unEjD2kIk8zJu3DO1qB3bkZdmZH7rjXw5o2cZDRqpk9enrqy266epW2jV7h50b1xp7p0OG9Z0smKl3ZhK7KDwEdOENfePerVKNGgFDFEvK4B6IzL93LVi04rstWYCoB6ZuuHUixO1RIUogGqkoioMo5u5H496g8I7L/XIPOmPpmvxwPmp2HbTPGLOvSSWH/dHEXMZRb+Eck8ovK5PN5datW5aWCZDlHlvmTMvXmS6FvcLP5VEmXcNy1uHVdkrKgzRs7NR4SUXLUQM03hIsUSFSDdzmeizs9QS+rkzRNWImAKWaa83+qU7JCKFEgiAqhKBiVTBBK8vB01boXI/3gdbS1CA6GVxOD8ZF5jzB1GlQfO82Cn+UVD215zw7T7AAizAAizAAizAAizAAizAAizAAizAAizA/v/1FymVzG3oSFBIAAAAAElFTkSuQmCC" alt="Skilled Managers" style="height:44px;width:44px;border-radius:8px;object-fit:cover;flex-shrink:0;">
     <div>
       <div class="header-title">SM Coach</div>
@@ -641,6 +756,8 @@
     <strong style="color:rgba(245,242,235,0.8)">Skilled Managers team, University of Westminster</strong>
   </div>
 </header>
+
+<div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
 
 <div class="app">
   <!-- Sidebar -->
@@ -756,6 +873,21 @@
 </div>
 
 <script>
+// ── Mobile sidebar toggle ──────────────────────────────────────────────────
+function toggleSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  sidebar.classList.toggle('open');
+  overlay.classList.toggle('open');
+}
+
+function closeSidebar() {
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  sidebar.classList.remove('open');
+  overlay.classList.remove('open');
+}
+
 // ── State ──────────────────────────────────────────────────────────────────
 const state = {
   topic: null,
@@ -1207,6 +1339,9 @@ function selectTopic(topic) {
   state.phase = 'prepare';
   state.history = [];
   state.phaseComplete = { prepare: false, roleplay: false, debrief: false };
+
+  // Close sidebar on mobile
+  closeSidebar();
 
   // Update sidebar buttons
   document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
